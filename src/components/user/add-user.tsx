@@ -6,8 +6,7 @@ import { IFormUser } from "@/types/user";
 import { userValidationSchema } from "@/validations/userValidationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -21,8 +20,7 @@ const createUser = async (payload: IFormUser) => {
 
 const AddUser = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const router = useRouter();
-
+  const queryClient = useQueryClient();
   const {
     control,
     formState: { errors, isSubmitting },
@@ -39,7 +37,6 @@ const AddUser = () => {
   });
 
   const { mutate } = useMutation({
-    mutationKey: ["createUser"],
     mutationFn: createUser,
   });
 
@@ -55,7 +52,9 @@ const AddUser = () => {
       onSuccess: () => {
         setOpen(false);
         reset();
-        router.refresh();
+        queryClient.invalidateQueries({
+          queryKey: ["user"],
+        });
         alert("success create user");
       },
       onError: () => alert("failed to create user"),
