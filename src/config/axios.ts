@@ -1,5 +1,8 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
+
+console.log()
+
 const createAxiosInstance = () => {
   // got referance from google how to check client or server side
   const isServer = typeof window === "undefined";
@@ -7,6 +10,7 @@ const createAxiosInstance = () => {
     ? process.env.NEXT_PUBLIC_BASE_URL_API
     : process.env.NEXT_PUBLIC_BASE_URL;
 
+    console.log(baseUrl)
   return axios.create({
     baseURL: baseUrl,
     timeout: 5000, // Set timeout for requests (optional)

@@ -21,6 +21,7 @@ const FetchTable: FC<IDataTable> = ({
   pagination,
   onPaginationChange,
   count,
+  loading,
 }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const columns = useMemo(() => table.columns, []);
@@ -31,7 +32,11 @@ const FetchTable: FC<IDataTable> = ({
     rowCount: count,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    manualPagination: false,
+    onPaginationChange: onPaginationChange,
+    manualPagination: true,
+    state: {
+      pagination,
+    },
   });
 
   return (
@@ -55,15 +60,36 @@ const FetchTable: FC<IDataTable> = ({
             ))}
           </TableHead>
           <TableBody>
-            {tableInstance.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            {loading ? (
+              table.rows.length === 0 && !loading ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    No Data
                   </TableCell>
+                </TableRow>
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    Loading
+                  </TableCell>
+                </TableRow>
+              )
+            ) : (
+              <>
+                {tableInstance.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 ))}
-              </TableRow>
-            ))}
+              </>
+            )}
           </TableBody>
         </Table>
         <div className="h-4" />
@@ -71,8 +97,8 @@ const FetchTable: FC<IDataTable> = ({
       <Pagination
         color="primary"
         count={tableInstance.getPageCount()}
-        page={pagination.pageIndex + 1}
-        onChange={(_, v: number) => onPaginationChange(v)}
+        // page={tableInstance.getSltate().pagination.pageIndex + 1}
+        onChange={(_, v: number) => tableInstance.setPageIndex(v)}
       />
     </>
   );

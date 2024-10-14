@@ -3,8 +3,7 @@ import { IUser } from "@/types/user";
 import { Delete } from "@mui/icons-material";
 import { IconButton, Stack, Typography } from "@mui/material";
 import { Button, Dialog, DialogContent } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 const deleteUser = async (payload: string) => {
@@ -15,7 +14,7 @@ const deleteUser = async (payload: string) => {
 
 const DeleteUser = ({ data }: { data: IUser }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleClose = () => {
     setOpen(false);
@@ -27,8 +26,10 @@ const DeleteUser = ({ data }: { data: IUser }) => {
   const onDelete = async () => {
     mutate(data.id, {
       onSuccess: () => {
-        router.refresh();
         setOpen(false);
+        queryClient.invalidateQueries({
+          queryKey: ["user"],
+        });
       },
       onError: () => alert("Failed to delete user"),
     });

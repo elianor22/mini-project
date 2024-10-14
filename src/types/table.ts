@@ -1,10 +1,11 @@
-import { RowData } from "@tanstack/react-table";
+import { OnChangeFn, PaginationState, RowData } from "@tanstack/react-table";
 
 export interface IDataTable {
   table: Table;
-  onPaginationChange: (paginationIndex: number) => void;
+  onPaginationChange: OnChangeFn<PaginationState>;
   pagination: Pagination;
   count: number;
+  loading: boolean;
 }
 
 type Table = {

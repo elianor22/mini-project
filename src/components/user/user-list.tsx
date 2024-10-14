@@ -2,45 +2,53 @@
 
 import FetchTable from "@/components/commons/FetchTable/FetchTable";
 import { TABLE_COLUMN_USER } from "@/constants/tableColumns/UsersColumn";
+import { BaseService } from "@/service/base.service";
 import { IResponseUser } from "@/types/response/users";
 import { Pagination } from "@/types/table";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FC, memo, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { memo, useState } from "react";
 
-type UserList = {
-  data: IResponseUser;
-};
+const UserList = memo(({}) => {
+  const [pagination, setPagination] = useState<Pagination>({
+    pageIndex: 1,
+    pageSize: 10,
+  });
 
-const UserList: FC<UserList> = memo(({ data }) => {
-  const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const pagination: Pagination = {
-    pageIndex: data.page - 1,
-    pageSize: data.limit,
-  };
-
-  const handlePaginationChange = useCallback(
-    (newPage: number) => {
-      const query = new URLSearchParams(searchParams.toString());
-      query.set("page", newPage.toString());
-
-      // Use shallow routing to update the URL without a full re-render
-      router.replace(`${pathname}?${query}`, {});
+  const { data, isLoading } = useQuery<IResponseUser>({
+    queryKey: ["user", pagination.pageIndex],
+    queryFn: async () => {
+      const service = new BaseService("/user");
+      const res = await service.get({
+        params: {
+          page: pagination.pageIndex,
+        },
+      });
+      return res;
     },
-    [pathname, searchParams, router]
-  );
+    refetchOnWindowFocus: false,
+  });
+
+  // const handlePaginationChange = useCallback(
+  //   (newPage: number) => {
+  //     const query = new URLSearchParams(searchParams.toString());
+  //     query.set("page", newPage.toString());
+
+  //     // Use shallow routing to update the URL without a full re-render
+  //     router.replace(`${pathname}?${query}`, {});
+  //   },
+  //   [pathname, searchParams, router]
+  // );
 
   return (
     <FetchTable
       pagination={pagination}
-      onPaginationChange={handlePaginationChange}
-      count={data.total}
+      onPaginationChange={setPagination}
+      count={data?.total || 0}
       table={{
         columns: TABLE_COLUMN_USER,
-        rows: data.data,
+        rows: data?.data || [],
       }}
+      loading={isLoading}
     />
   );
 });

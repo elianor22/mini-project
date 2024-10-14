@@ -7,8 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -22,8 +21,7 @@ const editUser = async (payload: IFormUser) => {
 
 const EditUser = ({ data }: { data: IUser }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const router = useRouter();
-
+  const queryClient = useQueryClient();
   const {
     control,
     formState: { errors, isSubmitting },
@@ -41,7 +39,6 @@ const EditUser = ({ data }: { data: IUser }) => {
     setOpen(false);
   };
   const { mutate } = useMutation({
-    mutationKey: ["editUser"],
     mutationFn: editUser,
   });
   const onCreate = async (form: IFormUser) => {
@@ -53,7 +50,10 @@ const EditUser = ({ data }: { data: IUser }) => {
     mutate(payload, {
       onSuccess: () => {
         setOpen(false);
-        router.refresh();
+        queryClient.invalidateQueries({
+          queryKey: ["user"],
+        });
+        // router.refresh();
       },
       onError: () => alert("Failed to edit user"),
     });

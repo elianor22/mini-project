@@ -12,8 +12,8 @@ export class BaseService {
     this.subUrl = subUrl;
   }
 
-  async get<T>(options: IOptions): Promise<T> {
-    const res = await axiosInstance.get<T>(this.subUrl, { ...options });
+  async get(options?: IOptions) {
+    const res = await axiosInstance.get(this.subUrl, { ...options });
     return res.data;
   }
 

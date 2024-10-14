@@ -6,4 +6,5 @@ export interface IUser {
 
 export interface IFormUser extends IUser {
   password: string;
+  confirmPassword: string;
 }

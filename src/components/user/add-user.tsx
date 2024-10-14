@@ -33,11 +33,11 @@ const AddUser = () => {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
     resolver: zodResolver(userValidationSchema),
   });
 
-  console.log(errors);
   const { mutate } = useMutation({
     mutationKey: ["createUser"],
     mutationFn: createUser,
@@ -89,6 +89,13 @@ const AddUser = () => {
               control={control}
               errors={errors}
               label="Password"
+              type="password"
+            />
+            <InputField
+              name="confirmPassword"
+              control={control}
+              errors={errors}
+              label="Confirm Password"
               type="password"
             />
             {/* <Checkbox name="isDefaultPassword" control={control} /> */}

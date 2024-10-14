@@ -5,12 +5,14 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+
+    console.log(request.url);
     const page = Number(searchParams.get("page")) || 1;
     const limit = Number(searchParams.get("limit")) || 10;
 
     const service = new BaseService("/users");
     // console.log(request);
-    const res = await service.get<IResponseUser>({
+    const res = await service.get({
       params: {
         page,
         limit,
