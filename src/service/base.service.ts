@@ -1,7 +1,7 @@
 import axiosInstance from "@/config/axios";
 import { CreateAxiosDefaults } from "axios";
 
-interface IOptions extends CreateAxiosDefaults {
+export interface IOptions extends CreateAxiosDefaults {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   headers?: any;
 }

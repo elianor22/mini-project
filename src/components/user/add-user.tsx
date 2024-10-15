@@ -46,8 +46,6 @@ const AddUser = () => {
   };
 
   const onCreate = async (form: IFormUser) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
     mutate(form, {
       onSuccess: () => {
         setOpen(false);
